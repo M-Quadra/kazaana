@@ -1,4 +1,5 @@
 # kazaana
+
 error tracking for go
 
 由于发生error时的调用栈输出只截止上一个函数入口, 如果自定义函数较多, `error`首次出现的位置较深, 简直可怕
