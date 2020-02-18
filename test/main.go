@@ -8,8 +8,9 @@ import (
 )
 
 func main() {
-	err := errorTest2()
-	if err.HasError() {
+	kerr := errorTest2()
+
+	if kerr.HasError() {
 		fmt.Println("err")
 	} else {
 		fmt.Println("ok")
@@ -17,8 +18,8 @@ func main() {
 }
 
 func errorTest2() kazaana.Error {
-	err := errorTest()
-	return err
+	kerr := errorTest()
+	return kerr
 }
 
 func errorTest() kazaana.Error {
