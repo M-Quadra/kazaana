@@ -40,6 +40,12 @@ kazaana.FirstCallers = 5
 首次捕获错误信息时保存的调用栈层数, 默认为5
 
 ```
+kazaana.TimeLocation
+```
+
+错误日志的显示时区, 有些环境的默认时区为GMT, 不是正确的本地时区
+
+```
 kazaana.New(err)
 ```
 

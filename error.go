@@ -6,9 +6,6 @@ import (
 	"time"
 )
 
-// FirstCallers first track num
-var FirstCallers = 5
-
 // Error error info
 type Error struct {
 	_beginTime time.Time
@@ -23,7 +20,7 @@ func HasError(err error) bool {
 		return false
 	}
 
-	nowTime := time.Now()
+	nowTime := time.Now().In(timeLocation())
 
 	fmt.Println("error happen:")
 	fmt.Println("    ", nowTime.Format("2006-01-02 15:04:05"), nowTime.Unix(), nowTime.UnixNano())
@@ -80,7 +77,7 @@ func New(err error) Error {
 	}
 
 	opt := Error{
-		_beginTime: time.Now(),
+		_beginTime: time.Now().In(timeLocation()),
 		_info:      err.Error(),
 		_callers:   callerInfoAry,
 		_has:       true,
