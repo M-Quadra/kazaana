@@ -18,7 +18,7 @@ error tracking for go
 
 # 速食一览
 
-运行`./test/main.go`即可预览输出效果
+运行`go test`即可预览输出效果
 
 ```
 error happen:
@@ -71,3 +71,9 @@ kazaana.HasError(err)
 ```
 
 检查`error`是否发生错误, 若是, 则输出错误信息
+
+```
+kazaana.RawError()
+```
+
+获取原始`error`

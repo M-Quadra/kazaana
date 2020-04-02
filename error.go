@@ -9,9 +9,8 @@ import (
 // Error error info
 type Error struct {
 	_beginTime time.Time
-	_info      string
-	_has       bool
 	_callers   []string
+	_src       error
 }
 
 // HasError error check
@@ -39,12 +38,12 @@ func HasError(err error) bool {
 
 // CheckError check error without print
 func (slf Error) CheckError() bool {
-	return slf._has
+	return slf._src != nil
 }
 
 // HasError check error and print
 func (slf Error) HasError() bool {
-	if !slf._has {
+	if !slf.CheckError() {
 		return false
 	}
 
@@ -52,7 +51,7 @@ func (slf Error) HasError() bool {
 
 	fmt.Println("error happen:")
 	fmt.Println("    ", stTime.Format("2006-01-02 15:04:05"), stTime.Unix(), stTime.UnixNano())
-	fmt.Println("    ", slf._info)
+	fmt.Println("    ", slf._src.Error())
 	for _, v := range slf._callers {
 		fmt.Println("    ", v)
 	}
@@ -78,9 +77,13 @@ func New(err error) Error {
 
 	opt := Error{
 		_beginTime: time.Now().In(timeLocation()),
-		_info:      err.Error(),
 		_callers:   callerInfoAry,
-		_has:       true,
+		_src:       err,
 	}
 	return opt
+}
+
+// RawError get raw error
+func (slf Error) RawError() error {
+	return slf._src
 }
