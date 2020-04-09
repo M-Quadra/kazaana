@@ -21,18 +21,18 @@ func HasError(err error) bool {
 
 	nowTime := time.Now().In(timeLocation())
 
-	fmt.Println("error happen:")
-	fmt.Println("    ", nowTime.Format("2006-01-02 15:04:05"), nowTime.Unix(), nowTime.UnixNano())
-	fmt.Println("    ", err.Error())
+	info := fmt.Sprintln("error happen:")
+	info += fmt.Sprintln("    ", nowTime.Format("2006-01-02 15:04:05"), nowTime.Unix(), nowTime.UnixNano())
+	info += fmt.Sprintln("    ", err.Error())
 	for i := 1; i < FirstCallers+1; i++ {
 		ptr, file, line, ok := runtime.Caller(i)
 		if !ok {
 			break
 		}
 
-		info := fmt.Sprintf("%s:%d +%#x", file, line, ptr)
-		fmt.Println("    ", info)
+		info += fmt.Sprintf("     %s:%d +%#x", file, line, ptr) + "\n"
 	}
+	fmt.Println(info)
 	return true
 }
 
@@ -49,12 +49,13 @@ func (slf Error) HasError() bool {
 
 	stTime := slf._beginTime
 
-	fmt.Println("error happen:")
-	fmt.Println("    ", stTime.Format("2006-01-02 15:04:05"), stTime.Unix(), stTime.UnixNano())
-	fmt.Println("    ", slf._src.Error())
+	info := fmt.Sprintln("error happen:")
+	info += fmt.Sprintln("    ", stTime.Format("2006-01-02 15:04:05"), stTime.Unix(), stTime.UnixNano())
+	info += fmt.Sprintln("    ", slf._src.Error())
 	for _, v := range slf._callers {
-		fmt.Println("    ", v)
+		info += fmt.Sprintln("    ", v)
 	}
+	fmt.Println(info)
 	return true
 }
 
