@@ -33,6 +33,8 @@ error happen:
 
 # 食用指北
 
+## 休整
+
 ```
 kazaana.FirstCallers = 5
 ```
@@ -46,11 +48,18 @@ kazaana.TimeLocation
 错误日志的显示时区, 有些环境的默认时区为GMT, 不是正确的本地时区
 
 ```
+kazaana.Header
+```
+
+自定义头部文字, 后续可能会改为具体方法, 目前还没有必要
+
+## 动工
+
+```
 kazaana.New(err)
 ```
 
 构建新的`kazaana.Error`, 并保存当前调用栈信息
-
 
 ```
 err := kazaana.Error{}

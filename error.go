@@ -21,7 +21,7 @@ func HasError(err error) bool {
 
 	nowTime := time.Now().In(timeLocation())
 
-	info := fmt.Sprintln("error happen:")
+	info := fmt.Sprintln(Header)
 	info += fmt.Sprintln("    ", nowTime.Format("2006-01-02 15:04:05"), nowTime.Unix(), nowTime.UnixNano())
 	info += fmt.Sprintln("    ", err.Error())
 	for i := 1; i < FirstCallers+1; i++ {
@@ -49,7 +49,7 @@ func (slf Error) HasError() bool {
 
 	stTime := slf._beginTime
 
-	info := fmt.Sprintln("error happen:")
+	info := fmt.Sprintln(Header)
 	info += fmt.Sprintln("    ", stTime.Format("2006-01-02 15:04:05"), stTime.Unix(), stTime.UnixNano())
 	info += fmt.Sprintln("    ", slf._src.Error())
 	for _, v := range slf._callers {

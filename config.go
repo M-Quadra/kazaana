@@ -2,12 +2,18 @@ package kazaana
 
 import "time"
 
-// FirstCallers first track num
-var FirstCallers = 5
+var (
+	// FirstCallers first track num
+	FirstCallers = 5
 
-// TimeLocation error information time
-// default time.Local
-var TimeLocation *time.Location
+	// TimeLocation error information time
+	//  default time.Local
+	TimeLocation = time.Local
+
+	// Header of error info
+	//  default "error happen:"
+	Header = "error happen:"
+)
 
 func init() {
 	if TimeLocation != nil {
