@@ -10,7 +10,7 @@ error tracking for go
 
 那干脆自己针对发生`error`的地方保存调用栈, 在后续回调中依然可以找到出错位置
 
-每次输出时附带`error`捕获的时间, 格式为`2006-01-02 15:04:05 .Unix() .UnixNano()`
+每次输出时附带`error`捕获的时间, 格式为`2006-01-02 15:04:05 .UnixNano()`
 
 调用栈输出格式参考了`vscode`下的输出形式
 
@@ -22,7 +22,7 @@ error tracking for go
 
 ```
 error happen:
-     2020-02-18 22:05:37 1582034737 1582034737352519000
+     2020-02-18 22:05:37 1582034737352519000
      parsing time "1970-01-01 08:00:00" as "2006-01-02 15:04:051": cannot parse "" as "1"
      /Users/m_quadra/go/src/github.com/m_quadra/kazaana/test/main.go:29 +0x10a188d
      /Users/m_quadra/go/src/github.com/m_quadra/kazaana/test/main.go:20 +0x10a1633
