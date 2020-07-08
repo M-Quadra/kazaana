@@ -8,53 +8,57 @@ import (
 
 // Error error info
 type Error struct {
-	_beginTime time.Time
-	_callers   []string
-	_src       error
+	beginTime time.Time
+	callers   []string
+	src       error
 }
 
 // HasError error check
-func HasError(err error) bool {
+func HasError(err error, header ...string) bool {
 	if err == nil {
 		return false
 	}
 
-	nowTime := time.Now().In(timeLocation())
-
-	info := fmt.Sprintln(Header)
-	info += fmt.Sprintln("    ", nowTime.Format("2006-01-02 15:04:05"), nowTime.Unix(), nowTime.UnixNano())
-	info += fmt.Sprintln("    ", err.Error())
+	callerInfoAry := []string{}
 	for i := 1; i < FirstCallers+1; i++ {
 		ptr, file, line, ok := runtime.Caller(i)
 		if !ok {
 			break
 		}
 
-		info += fmt.Sprintf("     %s:%d +%#x", file, line, ptr) + "\n"
+		info := fmt.Sprintf("%s:%d +%#x", file, line, ptr)
+		callerInfoAry = append(callerInfoAry, info)
 	}
+
+	nowTime := time.Now().In(timeLocation())
+	nowHeader := Header
+	if len(header) > 0 {
+		nowHeader = header[0]
+	}
+
+	info := errorInfo(nowHeader, nowTime, err.Error(), callerInfoAry)
 	fmt.Println(info)
 	return true
 }
 
 // CheckError check error without print
 func (slf Error) CheckError() bool {
-	return slf._src != nil
+	return slf.src != nil
 }
 
 // HasError check error and print
-func (slf Error) HasError() bool {
+func (slf Error) HasError(header ...string) bool {
 	if !slf.CheckError() {
 		return false
 	}
 
-	stTime := slf._beginTime
-
-	info := fmt.Sprintln(Header)
-	info += fmt.Sprintln("    ", stTime.Format("2006-01-02 15:04:05"), stTime.Unix(), stTime.UnixNano())
-	info += fmt.Sprintln("    ", slf._src.Error())
-	for _, v := range slf._callers {
-		info += fmt.Sprintln("    ", v)
+	stTime := slf.beginTime
+	nowHeader := Header
+	if len(header) > 0 {
+		nowHeader = header[0]
 	}
+
+	info := errorInfo(nowHeader, stTime, slf.src.Error(), slf.callers)
 	fmt.Println(info)
 	return true
 }
@@ -77,14 +81,25 @@ func New(err error) Error {
 	}
 
 	opt := Error{
-		_beginTime: time.Now().In(timeLocation()),
-		_callers:   callerInfoAry,
-		_src:       err,
+		beginTime: time.Now().In(timeLocation()),
+		callers:   callerInfoAry,
+		src:       err,
 	}
 	return opt
 }
 
 // RawError get raw error
 func (slf Error) RawError() error {
-	return slf._src
+	return slf.src
+}
+
+func errorInfo(header string, stTime time.Time, errStr string, callerAry []string) string {
+	info := fmt.Sprintln(header)
+	info += fmt.Sprintln("    ", stTime.Format("2006-01-02 15:04:05"), stTime.UnixNano())
+	info += fmt.Sprintln("    ", errStr)
+	for _, v := range callerAry {
+		info += fmt.Sprintln("    ", v)
+	}
+
+	return info
 }

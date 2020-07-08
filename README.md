@@ -64,9 +64,12 @@ kazaana.New(err)
 ```
 err := kazaana.Error{}
 err.HasError()
+err.HasError("[optional]:")
 ```
 
 检查是否发生错误, 若是, 则输出错误信息
+
+可自定义输出的临时头部文字
 
 ```
 err := kazaana.Error{}
@@ -77,9 +80,12 @@ err.CheckError()
 
 ```
 kazaana.HasError(err)
+kazaana.HasError(err, "[optional2]:")
 ```
 
 检查`error`是否发生错误, 若是, 则输出错误信息
+
+第二次参数为可选的临时头部文字
 
 ```
 kazaana.RawError()
