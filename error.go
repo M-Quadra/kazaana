@@ -30,7 +30,7 @@ func HasError(err error, header ...string) bool {
 		callerInfoAry = append(callerInfoAry, info)
 	}
 
-	nowTime := time.Now().In(timeLocation())
+	nowTime := time.Now()
 	nowHeader := Header
 	if len(header) > 0 {
 		nowHeader = header[0]
@@ -81,7 +81,7 @@ func New(err error) Error {
 	}
 
 	opt := Error{
-		beginTime: time.Now().In(timeLocation()),
+		beginTime: time.Now(),
 		callers:   callerInfoAry,
 		src:       err,
 	}
