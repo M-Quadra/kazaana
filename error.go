@@ -8,6 +8,8 @@ import (
 
 // Error error info
 type Error struct {
+	error
+
 	beginTime time.Time
 	callers   []string
 	src       error
@@ -91,6 +93,14 @@ func New(err error) Error {
 // RawError get raw error
 func (slf Error) RawError() error {
 	return slf.src
+}
+
+func (slf Error) Error() string {
+	if slf.CheckError() {
+		return slf.RawError().Error()
+	}
+
+	return ""
 }
 
 func errorInfo(header string, stTime time.Time, errStr string, callerAry []string) string {

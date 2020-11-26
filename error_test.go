@@ -1,6 +1,7 @@
 package kazaana
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 	"time"
@@ -12,6 +13,15 @@ func TestHelloWorld(t *testing.T) {
 	kerr := errorFunc()
 	kerr.HasError()
 	kerr.HasError("[optional]:")
+
+	err := errors.New("WTF")
+	fmt.Println(err)
+	err = &kerr
+	fmt.Println(err)
+	fmt.Println(kerr)
+
+	kerr = New(nil)
+	fmt.Println(kerr.Error())
 }
 
 func errorFunc() Error {

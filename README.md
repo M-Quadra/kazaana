@@ -56,9 +56,9 @@ kazaana.New(err)
 构建新的`kazaana.Error`, 并保存当前调用栈信息
 
 ```
-err := kazaana.Error{}
-err.HasError()
-err.HasError("[optional]:")
+kerr := kazaana.Error{}
+kerr.HasError()
+kerr.HasError("[optional]:")
 ```
 
 检查是否发生错误, 若是, 则输出错误信息
@@ -66,8 +66,8 @@ err.HasError("[optional]:")
 可自定义输出的临时头部文字
 
 ```
-err := kazaana.Error{}
-err.CheckError()
+kerr := kazaana.Error{}
+kerr.CheckError()
 ```
 
 检查是否发生错误, 无输出, 用于`kazaana.Error`传递过程中的检查
@@ -79,10 +79,20 @@ kazaana.HasError(err, "[optional2]:")
 
 检查`error`是否发生错误, 若是, 则输出错误信息
 
-第二次参数为可选的临时头部文字
+第二参数为可选的临时头部文字
 
 ```
-kazaana.RawError()
+kerr.RawError()
 ```
 
 获取原始`error`
+
+```
+errStr := kerr.Error()
+```
+
+获取原始错误信息, 适用于需要对错误进行分类处理的场景, 内置了`nil`判断
+
+## 填坑
+
+[填坑记录](./his.md)
