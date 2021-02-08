@@ -21,6 +21,11 @@ func HasError(err error, header ...string) bool {
 		return false
 	}
 
+	kerr, ok := err.(Error)
+	if ok {
+		return kerr.HasError()
+	}
+
 	callerInfoAry := []string{}
 	for i := 1; i < FirstCallers+1; i++ {
 		ptr, file, line, ok := runtime.Caller(i)

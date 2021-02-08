@@ -24,6 +24,18 @@ func TestHelloWorld(t *testing.T) {
 	fmt.Println(kerr.Error())
 }
 
+func TestErrorCheck(t *testing.T) {
+	kerr := New(nil)
+	if HasError(kerr) {
+		t.Fail()
+	}
+
+	kerr = New(errors.New("test"))
+	if !HasError(kerr) {
+		t.Fail()
+	}
+}
+
 func errorFunc() Error {
 	kerr := errorHappen()
 	return kerr
