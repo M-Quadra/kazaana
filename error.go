@@ -27,7 +27,7 @@ func HasError(err error, header ...string) bool {
 	}
 
 	callerInfoAry := []string{}
-	for i := 1; i < FirstCallers+1; i++ {
+	for i := 1; i < Config.FirstCallers()+1; i++ {
 		ptr, file, line, ok := runtime.Caller(i)
 		if !ok {
 			break
@@ -38,7 +38,7 @@ func HasError(err error, header ...string) bool {
 	}
 
 	nowTime := time.Now()
-	nowHeader := Header
+	nowHeader := Config.Header()
 	if len(header) > 0 {
 		nowHeader = header[0]
 	}
@@ -60,7 +60,7 @@ func (slf Error) HasError(header ...string) bool {
 	}
 
 	stTime := slf.beginTime
-	nowHeader := Header
+	nowHeader := Config.Header()
 	if len(header) > 0 {
 		nowHeader = header[0]
 	}
@@ -77,7 +77,7 @@ func New(err error) Error {
 	}
 
 	callerInfoAry := []string{}
-	for i := 1; i < FirstCallers+1; i++ {
+	for i := 1; i < Config.FirstCallers()+1; i++ {
 		ptr, file, line, ok := runtime.Caller(i)
 		if !ok {
 			break

@@ -36,13 +36,13 @@ error happen:
 ## 休整
 
 ```
-kazaana.FirstCallers = 5
+kazaana.Config.FirstCallers(5)
 ```
 
 首次捕获错误信息时保存的调用栈层数, 默认为5
 
 ```
-kazaana.Header
+kazaana.Config.Header("error happen:")
 ```
 
 自定义头部文字, 后续可能会改为具体方法, 目前还没有必要
