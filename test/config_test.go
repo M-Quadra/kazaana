@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/M-Quadra/kazaana"
+	"github.com/M-Quadra/kazaana/v2"
 )
 
 func TestConfig(t *testing.T) {
