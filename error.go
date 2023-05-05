@@ -1,120 +1,53 @@
 package kazaana
 
 import (
-	"fmt"
-	"runtime"
+	"reflect"
 	"time"
 )
 
 // Error error info
 type Error struct {
-	error
+	Raw error
 
-	beginTime time.Time
-	callers   []string
-	src       error
+	Time    time.Time
+	Args    []any
+	Callers []string
 }
 
-// HasError error check
-func HasError(err error, header ...string) bool {
+var ( // check interface
+	_ Unwrapable = Error{}
+	_ error      = Error{}
+)
+
+func (e Error) Error() string {
+	err := e.Raw
 	if err == nil {
+		return ""
+	}
+
+	return e.Raw.Error()
+}
+
+func (e Error) Unwrap() error {
+	return e.Raw
+}
+
+// As support errors.As to self
+func (e Error) As(target any) bool {
+	if e.Raw == nil || target == nil {
 		return false
 	}
 
-	kerr, ok := err.(Error)
-	if ok {
-		return kerr.HasError()
-	}
-
-	callerInfoAry := []string{}
-	for i := 1; i < Config.FirstCallers()+1; i++ {
-		ptr, file, line, ok := runtime.Caller(i)
-		if !ok {
-			break
-		}
-
-		info := fmt.Sprintf("%s:%d +%#x", file, line, ptr)
-		callerInfoAry = append(callerInfoAry, info)
-	}
-
-	nowTime := time.Now()
-	nowHeader := Config.Header()
-	if len(header) > 0 {
-		nowHeader = header[0]
-	}
-
-	info := errorInfo(nowHeader, nowTime, err.Error(), callerInfoAry)
-	fmt.Println(info)
-	return true
-}
-
-// CheckError check error without print
-func (slf Error) CheckError() bool {
-	return slf.src != nil
-}
-
-// HasError check error and print
-func (slf Error) HasError(header ...string) bool {
-	if !slf.CheckError() {
+	val := reflect.ValueOf(target)
+	typ := val.Type()
+	if typ.Kind() != reflect.Ptr {
 		return false
 	}
 
-	stTime := slf.beginTime
-	nowHeader := Config.Header()
-	if len(header) > 0 {
-		nowHeader = header[0]
+	targetType := typ.Elem()
+	if reflect.TypeOf(&e).AssignableTo(targetType) {
+		val.Elem().Set(reflect.ValueOf(&e))
+		return true
 	}
-
-	info := errorInfo(nowHeader, stTime, slf.src.Error(), slf.callers)
-	fmt.Println(info)
-	return true
-}
-
-// New error to kazaana.Error
-func New(err error) Error {
-	if err == nil {
-		return Error{}
-	}
-
-	callerInfoAry := []string{}
-	for i := 1; i < Config.FirstCallers()+1; i++ {
-		ptr, file, line, ok := runtime.Caller(i)
-		if !ok {
-			break
-		}
-
-		info := fmt.Sprintf("%s:%d +%#x", file, line, ptr)
-		callerInfoAry = append(callerInfoAry, info)
-	}
-
-	opt := Error{
-		beginTime: time.Now(),
-		callers:   callerInfoAry,
-		src:       err,
-	}
-	return opt
-}
-
-// RawError get raw error
-func (slf Error) RawError() error {
-	return slf.src
-}
-
-func (slf Error) Error() string {
-	if slf.CheckError() {
-		return slf.RawError().Error()
-	}
-
-	return ""
-}
-
-func errorInfo(header string, stTime time.Time, errStr string, callerAry []string) string {
-	info := fmt.Sprintln(header)
-	info += fmt.Sprintln("    ", stTime.Format("2006-01-02 15:04:05"), stTime.UnixNano())
-	info += fmt.Sprintln("    ", errStr)
-	for _, v := range callerAry {
-		info += fmt.Sprintln("    ", v)
-	}
-
-	return info
+	return false
 }

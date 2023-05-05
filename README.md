@@ -1,98 +1,100 @@
 # kazaana
 
-error tracking for go
+个人瞎折腾的错误包装工具。
 
-由于发生error时的调用栈输出只截止上一个函数入口, 如果打印的`error`已经通过多个函数函数传递...头皮发麻
+
+
+默认的`error`缺少调用栈与参数信息, 多次传递后直接头皮发麻。
 
 > 阿库娅大人说: "今天能敲代码就今天敲吧，反正明天也不一定学去敲，如果敲不了，最后咕咕咕就是了！"
 > 
 > 我老婆说: "我讨厌的事有三件『办不到、好累、好麻烦』这三句话非常不好, 会抹杀人类所拥有的无限可能。"
 
-那干脆自己针对发生`error`的地方保存调用栈, 在后续回调中依然可以找到出错位置
+添加了调用栈保存、参数、时间。具体输出由外部实现, 用例格式参考了`panic`。
 
-每次输出时附带`error`捕获的时间, 格式为`2006-01-02 15:04:05 .UnixNano()`
 
-调用栈输出格式参考了`vscode`下的输出形式
 
-因为不想为`nil`判断烦恼, 所以使用了结构体
+## 概览
 
-# 速食一览
+错误包装
 
-运行`go test`即可预览输出效果
+```go
+func f1() error {
+	err1 := f0()
+	if err1 != nil {
+		return kazaana.Wrap(err1, 1)
+	}
 
-```
-error happen:
-     2020-02-18 22:05:37 1582034737352519000
-     parsing time "1970-01-01 08:00:00" as "2006-01-02 15:04:051": cannot parse "" as "1"
-     /Users/m_quadra/go/src/github.com/m_quadra/kazaana/test/main.go:29 +0x10a188d
-     /Users/m_quadra/go/src/github.com/m_quadra/kazaana/test/main.go:20 +0x10a1633
-     /Users/m_quadra/go/src/github.com/m_quadra/kazaana/test/main.go:11 +0x10a1634
-     /usr/local/go/src/runtime/proc.go:203 +0x102acbd
-     /usr/local/go/src/runtime/asm_amd64.s:1357 +0x1053080
+	// do something...
+	return nil
+}
 ```
 
-# 食用指北
 
-## 休整
 
-```
-kazaana.Config.FirstCallers(5)
-```
+日志输出(example)
 
-首次捕获错误信息时保存的调用栈层数, 默认为5
-
-```
-kazaana.Config.Header("error happen:")
-```
-
-自定义头部文字, 后续可能会改为具体方法, 目前还没有必要
-
-## 动工
-
-```
-kazaana.New(err)
+```go
+[Kazaana] error catch, 2023-05-05 22:03:31
+err0
+    Time: 2023-05-05 22:03:31.918
+    Args: 0
+    /xxxx/kazaana/internal/example/main.go:13 +main.f0
+    /xxxx/kazaana/internal/example/main.go:17 +main.f1
+    /xxxx/kazaana/internal/example/main.go:26 +main.main
+    /usr/local/go/src/runtime/proc.go:250 +runtime.main
+    /usr/local/go/src/runtime/asm_amd64.s:1598 +runtime.goexit
+        Time: 2023-05-05 22:03:31.918
+        Args: 1
+        /xxxx/kazaana/internal/example/main.go:19 +main.f1
 ```
 
-构建新的`kazaana.Error`, 并保存当前调用栈信息
 
-```
-kerr := kazaana.Error{}
-kerr.HasError()
-kerr.HasError("[optional]:")
-```
 
-检查是否发生错误, 若是, 则输出错误信息
+## 获取
 
-可自定义输出的临时头部文字
-
-```
-kerr := kazaana.Error{}
-kerr.CheckError()
+```shell
+go get github.com/M-Quadra/kazaana/v3
 ```
 
-检查是否发生错误, 无输出, 用于`kazaana.Error`传递过程中的检查
+
+
+## 说明
+
+- 自定义新建错误
 
 ```
-kazaana.HasError(err)
-kazaana.HasError(err, "[optional2]:")
+kazaana.Config.Creator = xxx
 ```
 
-检查`error`是否发生错误, 若是, 则输出错误信息
+影响方法`kazaana.New`通过string创建自定义错误。类似`errors.New`。
 
-第二参数为可选的临时头部文字
-
-```
-kerr.RawError()
-```
-
-获取原始`error`
+- 自定义错误包装
 
 ```
-errStr := kerr.Error()
+kazaana.Config.Wrapper = yyy
 ```
 
-获取原始错误信息, 适用于需要对错误进行分类处理的场景, 内置了`nil`判断
+影响方法`kazaana.Wrap`, 包装现有error。默认追加记录当前代码位置。
 
-## 填坑
+- 其他
+
+```
+errors.As(err, target)
+````
+
+当err与target均为`kazaana.Error`时, target将使用err本身赋值, 而不会寻找被包装的error
+
+```
+errors.Unwrap(err)
+```
+
+将返回内部error, 即`err.Raw`
+
+
+
+## Todo
+
+- [ ] errors.Join 支持
 
 [填坑记录](./his.md)

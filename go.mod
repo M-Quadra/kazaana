@@ -1,3 +1,3 @@
-module github.com/M-Quadra/kazaana/v2
+module github.com/M-Quadra/kazaana/v3
 
-go 1.16
+go 1.20
